@@ -36,7 +36,6 @@ using System.Net.Sockets;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading;
-using Mono.Security.Protocol.Tls;
 using NpgsqlTypes;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -82,21 +81,6 @@ namespace Npgsql
         /// Called to provide client certificates for SSL handshake.
         /// </summary>
         internal event ProvideClientCertificatesCallback ProvideClientCertificatesCallback;
-
-        /// <summary>
-        /// Mono.Security.Protocol.Tls.CertificateSelectionCallback delegate.
-        /// </summary>
-        internal event CertificateSelectionCallback CertificateSelectionCallback;
-
-        /// <summary>
-        /// Mono.Security.Protocol.Tls.CertificateValidationCallback delegate.
-        /// </summary>
-        internal event CertificateValidationCallback CertificateValidationCallback;
-
-        /// <summary>
-        /// Mono.Security.Protocol.Tls.PrivateKeySelectionCallback delegate.
-        /// </summary>
-        internal event PrivateKeySelectionCallback PrivateKeySelectionCallback;
 
         /// <summary>
         /// Called to validate server's certificate during SSL handshake
@@ -515,53 +499,6 @@ namespace Npgsql
                 catch
                 {
                 } //Eat exceptions from user code.
-            }
-        }
-
-        /// <summary>
-        /// Default SSL CertificateSelectionCallback implementation.
-        /// </summary>
-        internal X509Certificate DefaultCertificateSelectionCallback(X509CertificateCollection clientCertificates,
-                                                                     X509Certificate serverCertificate, string targetHost,
-                                                                     X509CertificateCollection serverRequestedCertificates)
-        {
-            if (CertificateSelectionCallback != null)
-            {
-                return CertificateSelectionCallback(clientCertificates, serverCertificate, targetHost, serverRequestedCertificates);
-            }
-            else
-            {
-                return null;
-            }
-        }
-
-        /// <summary>
-        /// Default SSL CertificateValidationCallback implementation.
-        /// </summary>
-        internal bool DefaultCertificateValidationCallback(X509Certificate certificate, int[] certificateErrors)
-        {
-            if (CertificateValidationCallback != null)
-            {
-                return CertificateValidationCallback(certificate, certificateErrors);
-            }
-            else
-            {
-                return true;
-            }
-        }
-
-        /// <summary>
-        /// Default SSL PrivateKeySelectionCallback implementation.
-        /// </summary>
-        internal AsymmetricAlgorithm DefaultPrivateKeySelectionCallback(X509Certificate certificate, string targetHost)
-        {
-            if (PrivateKeySelectionCallback != null)
-            {
-                return PrivateKeySelectionCallback(certificate, targetHost);
-            }
-            else
-            {
-                return null;
             }
         }
 
